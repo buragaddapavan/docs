@@ -1,0 +1,482 @@
+CREATE USER DBASUPT
+  IDENTIFIED BY dbasupt
+  DEFAULT TABLESPACE USERS
+  TEMPORARY TABLESPACE TEMP
+  ACCOUNT UNLOCK;
+  -- 2 Roles for DBASUPT 
+  GRANT CONNECT TO DBASUPT;
+  GRANT RESOURCE TO DBASUPT;
+  ALTER USER DBASUPT DEFAULT ROLE ALL;
+  -- 82 System Privileges for DBASUPT 
+  GRANT ADMINISTER DATABASE TRIGGER TO DBASUPT;
+  BEGIN
+SYS.DBMS_RESOURCE_MANAGER_PRIVS.GRANT_SYSTEM_PRIVILEGE
+  (GRANTEE_NAME   => 'DBASUPT', 
+   PRIVILEGE_NAME => 'ADMINISTER_RESOURCE_MANAGER',
+   ADMIN_OPTION   => FALSE);
+END;
+/
+  GRANT ADMINISTER SQL MANAGEMENT OBJECT TO DBASUPT;
+  GRANT ALTER ANY PROCEDURE TO DBASUPT;
+  GRANT ALTER ANY TABLE TO DBASUPT;
+  GRANT ALTER ANY TRIGGER TO DBASUPT;
+  GRANT ALTER ANY TYPE TO DBASUPT;
+  GRANT ALTER DATABASE TO DBASUPT;
+  GRANT ALTER PROFILE TO DBASUPT;
+  GRANT ALTER RESOURCE COST TO DBASUPT;
+  GRANT ALTER USER TO DBASUPT;
+  GRANT ANALYZE ANY TO DBASUPT;
+  GRANT AUDIT ANY TO DBASUPT;
+  GRANT AUDIT SYSTEM TO DBASUPT;
+  GRANT BECOME USER TO DBASUPT;
+  GRANT COMMENT ANY TABLE TO DBASUPT;
+  GRANT CREATE ANY CLUSTER TO DBASUPT;
+  GRANT CREATE ANY CONTEXT TO DBASUPT;
+  GRANT CREATE ANY DIMENSION TO DBASUPT;
+  GRANT CREATE ANY DIRECTORY TO DBASUPT;
+  GRANT CREATE ANY INDEX TO DBASUPT;
+  GRANT CREATE ANY INDEXTYPE TO DBASUPT;
+  GRANT CREATE ANY LIBRARY TO DBASUPT;
+  GRANT CREATE ANY MATERIALIZED VIEW TO DBASUPT;
+  GRANT CREATE ANY OPERATOR TO DBASUPT;
+  GRANT CREATE ANY PROCEDURE TO DBASUPT;
+  GRANT CREATE ANY SEQUENCE TO DBASUPT;
+  GRANT CREATE ANY SQL PROFILE TO DBASUPT;
+  GRANT CREATE ANY SYNONYM TO DBASUPT;
+  GRANT CREATE ANY TABLE TO DBASUPT;
+  GRANT CREATE ANY TRIGGER TO DBASUPT;
+  GRANT CREATE ANY TYPE TO DBASUPT;
+  GRANT CREATE ANY VIEW TO DBASUPT;
+  GRANT CREATE DATABASE LINK TO DBASUPT;
+  GRANT CREATE PROFILE TO DBASUPT;
+  GRANT CREATE PUBLIC DATABASE LINK TO DBASUPT;
+  GRANT CREATE PUBLIC SYNONYM TO DBASUPT;
+  GRANT CREATE ROLE TO DBASUPT;
+  GRANT CREATE ROLLBACK SEGMENT TO DBASUPT;
+  GRANT CREATE SESSION TO DBASUPT;
+  GRANT CREATE TABLE TO DBASUPT;
+  GRANT CREATE TABLESPACE TO DBASUPT;
+  GRANT CREATE USER TO DBASUPT;
+  GRANT DELETE ANY TABLE TO DBASUPT;
+  GRANT DROP ANY CLUSTER TO DBASUPT;
+  GRANT DROP ANY CONTEXT TO DBASUPT;
+  GRANT DROP ANY DIMENSION TO DBASUPT;
+  GRANT DROP ANY DIRECTORY TO DBASUPT;
+  GRANT DROP ANY INDEX TO DBASUPT;
+  GRANT DROP ANY INDEXTYPE TO DBASUPT;
+  GRANT DROP ANY LIBRARY TO DBASUPT;
+  GRANT DROP ANY MATERIALIZED VIEW TO DBASUPT;
+  GRANT DROP ANY OPERATOR TO DBASUPT;
+  GRANT DROP ANY OUTLINE TO DBASUPT;
+  GRANT DROP ANY PROCEDURE TO DBASUPT;
+  GRANT DROP ANY ROLE TO DBASUPT;
+  GRANT DROP ANY SEQUENCE TO DBASUPT;
+  GRANT DROP ANY SQL PROFILE TO DBASUPT;
+  GRANT DROP ANY SYNONYM TO DBASUPT;
+  GRANT DROP ANY TABLE TO DBASUPT;
+  GRANT DROP ANY TRIGGER TO DBASUPT;
+  GRANT DROP ANY TYPE TO DBASUPT;
+  GRANT DROP ANY VIEW TO DBASUPT;
+  GRANT DROP PROFILE TO DBASUPT;
+  GRANT DROP PUBLIC DATABASE LINK TO DBASUPT;
+  GRANT DROP PUBLIC SYNONYM TO DBASUPT;
+  GRANT DROP ROLLBACK SEGMENT TO DBASUPT;
+  GRANT DROP TABLESPACE TO DBASUPT;
+  GRANT DROP USER TO DBASUPT;
+  GRANT EXECUTE ANY OPERATOR TO DBASUPT;
+  GRANT EXECUTE ANY PROCEDURE TO DBASUPT;
+  GRANT EXECUTE ANY TYPE TO DBASUPT;
+  GRANT GLOBAL QUERY REWRITE TO DBASUPT;
+  GRANT GRANT ANY OBJECT PRIVILEGE TO DBASUPT;
+  GRANT GRANT ANY PRIVILEGE TO DBASUPT;
+  GRANT GRANT ANY ROLE TO DBASUPT;
+  GRANT INSERT ANY TABLE TO DBASUPT;
+  BEGIN
+SYS.DBMS_AQADM.GRANT_SYSTEM_PRIVILEGE (
+  PRIVILEGE    => 'MANAGE_ANY',
+  GRANTEE      => 'DBASUPT',
+  ADMIN_OPTION => FALSE);
+END;
+/
+  GRANT RESUMABLE TO DBASUPT;
+  GRANT SELECT ANY TABLE TO DBASUPT;
+  GRANT UNLIMITED TABLESPACE TO DBASUPT;
+  GRANT UPDATE ANY TABLE TO DBASUPT;
+  -- 15 Object Privileges for DBASUPT 
+    GRANT ALTER, DELETE, INDEX, INSERT, REFERENCES, SELECT, UPDATE, ON COMMIT REFRESH, QUERY REWRITE, DEBUG, FLASHBACK ON ivrprod.TOUCHPOINT_EVENT TO DBASUPT;
+   
+
+
+
+
+
+CREATE TABLE DBASUPT.PART_INFO_TEMP_TABLE
+(
+  TABLE_OWNER      VARCHAR2(30 BYTE),
+  TABLE_NAME       VARCHAR2(30 BYTE),
+  HIGH_VALUE       CLOB,
+  PARTITION_NAME   VARCHAR2(30 BYTE),
+  TABLESPACE_NAME  VARCHAR2(30 BYTE)
+)
+LOB (HIGH_VALUE) STORE AS BASICFILE (
+  TABLESPACE  USERS
+  ENABLE      STORAGE IN ROW
+  CHUNK       8192
+  RETENTION
+  NOCACHE
+  LOGGING
+      STORAGE    (
+                  INITIAL          64K
+                  NEXT             1M
+                  MINEXTENTS       1
+                  MAXEXTENTS       UNLIMITED
+                  PCTINCREASE      0
+                  BUFFER_POOL      DEFAULT
+                 ))
+TABLESPACE USERS
+PCTUSED    0
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+MONITORING;
+
+
+
+CREATE TABLE DBASUPT.PARTITION_INFO
+(
+  TABLE_OWNER       VARCHAR2(135 BYTE),
+  TABLE_NAME        VARCHAR2(135 BYTE),
+  KEEP_DAYS         NUMBER,
+  ARCHIVE           VARCHAR2(1 BYTE)            DEFAULT 'N',
+  ARCHIVE_SCHEMA    VARCHAR2(30 BYTE),
+  ARCHIVE_TAB_NAME  VARCHAR2(30 BYTE)
+)
+TABLESPACE USERS
+PCTUSED    0
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+MONITORING;
+
+
+SET DEFINE OFF;
+Insert into DBASUPT.PARTITION_INFO
+   (TABLE_OWNER, TABLE_NAME, KEEP_DAYS, ARCHIVE)
+ Values
+   ('IVRPROD', 'TOUCHPOINT_EVENT', 90, 'N');
+   
+   COMMIT;
+   
+
+tpndev.ebiz.verizon.com  
+   00 06 * * 0 /backup/scripts/maint/bin/partition_drop.ksh -s tpnqa
+00 06 * * 0 /backup/scripts/maint/bin/partition_drop.ksh -s tpndev
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+......................
+cat /backup/scripts/maint/bin/partition_drop.ksh
+
+
+#! /usr/bin/ksh
+# set -vx
+#
+#  Script Name:  partition_maint.ksh
+#   Author:  Ravi Krishnamurthy
+#   Date:    December 26, 2014
+#  NEEDS partition_info.sql
+#  Creates a file for all partitions
+#    that satisy the cutoff date parameter specified as input
+#
+#  ./partition_maint.ksh -s <ORACLE_SID> -schema -p <optional parallel .. defaults to 8>
+#
+#
+#
+# Set default values
+#
+# scriptname -s <sid>
+#
+script_path=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
+ScriptName=$0
+echo ${script_path}
+cutoff_date=2014-06-22
+typeset -u EnvType
+typeset -u PartInfoTable='PARTITION_INFO'
+typeset -u PartInfoTableOwner='DBASUPT'
+typeset -u TablespaceName='Partition Availability Report'
+PartInfoFile=${script_path}/PartInfoFile.list
+echo $PartInfoFile
+Parallel=4
+
+# PartInfoRpt=/tmp/partition_info.rpt
+# partition_drop=partition_maint_drop.sql
+ORACLE_SID_IN=NONE
+typeset -u TableOwner
+typeset -u TableName
+NbrOfDays=9999
+Parallel=8
+while [ $# -gt 0 ]
+do
+   case $1 in
+   -s) ORACLE_SID_IN=$2
+       export ORACLE_SID=${ORACLE_SID_IN}
+       shift 2  ;;
+   -schema) TableOwner=$2
+       shift 2  ;;
+   -Days) NbrOfDays=$2
+       shift 2  ;;
+   -pt) PartInfoTable=$2
+       shift 2  ;;
+   -pto) PartInfoTableOwner=$2
+       shift 2  ;;
+   -p) Parallel=$2
+       shift 2  ;;
+   esac
+done
+typeset -u PartInfo=${PartInfoTableOwner}.${PartInfoTable}
+typeset -u TempTable=${PartInfoTableOwner}.part_info_temp_table
+echo ORACLE_SID ${ORACLE_SID}
+echo cutoff_date ${cutoff_date}
+echo TableOwner ${TableOwner}
+echo table used ${PartInfoTable}
+logfoutput=${script_path}/partition_drop_${ORACLE_SID}.log
+rm $logfoutput
+#
+#  Verify for Parameter Presence
+#
+if [[ "${ORACLE_SID_IN}" = "NONE" ]]
+   then
+   echo "USAGE:  ./partition_maint.ksh -s <ORACLE_SID> "
+   exit
+fi
+#
+#  Set Oracle Environment using the Standard Script
+#
+#. ~/env_files/envoracle
+#select ORATAB file
+thisUnix=`uname`
+
+if [ $thisUnix = 'Linux' ]
+then
+        echo "OS is : $thisUnix"
+        ORATAB=/etc/oratab
+else [ $thisUnix = 'SunOS' ]
+        echo "OS is : $thisUnix"
+        ORATAB=/var/opt/oracle/oratab
+fi
+
+#  Run envoracle to set DBA system variables   !!
+#export ORACLE_SID=$DB
+export ORACLE_HOME=`cat ${ORATAB}|tr -d ' '|grep -v "^$"|grep -v "^#"|grep -w "$ORACLE_SID"|head -1|awk -F: '{print $2}'`
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib
+export PATH=$ORACLE_HOME/bin:$PATH#
+#  Get DB name
+#
+DBName=`sqlplus -s /nolog <<-EOF
+connect \'/ as sysdba
+set pages 0
+set heading off
+set echo off
+set feedback off
+set verify off
+spool ${PartInfoFile}
+select ora_database_name from dual;
+EOF`
+#
+# Remove Blanks in the name
+#
+DBName=`echo $DBName | awk '{print $1""$2}'`
+IndexRebuild=${script_path}/$DBName_rebuild_index.sql
+echo $DBName ..dbname
+echo ${IndexRebuild}  Index file
+# . ~/env_files/kshrc
+echo ${PartInfo}
+rm $PartInfoFile
+sqlplus -s /nolog <<-EOF
+connect \'/ as sysdba
+set pages 0
+set heading off
+set echo off
+set feedback off
+set verify off
+spool ${PartInfoFile}
+select table_owner || ' ' || table_name || ' ' || keep_days
+  from ${PartInfo};
+spool off
+EOF
+echo  new test file ${PartInfo}
+sqlplus -s /nolog <<-EOF
+connect \'/ as sysdba
+drop table ${TempTable};
+-- create GLOBAL TEMPORARY table ${TempTable}
+create  table ${TempTable}
+ as select table_owner,table_name,to_lob(high_value) high_value,partition_name,tablespace_name
+   from (SELECT * FROM dba_tab_partitions where 1=0);
+EOF
+#
+#  Getting Ready to Create the SQL for Dropping and Rebuilding Indexes
+#
+RUN_DROP_SQL_SCR=${script_path}/${DBName}_drop.sql
+rm $RUN_DROP_SQL_SCR
+echo 'SET ECHO ON' > $RUN_DROP_SQL_SCR
+echo 'SET TIMING ON' >> $RUN_DROP_SQL_SCR
+echo 'SET TERMOUT ON' >> $RUN_DROP_SQL_SCR
+echo '--' >> $RUN_DROP_SQL_SCR
+#
+#  Reading All the necessary info about the tables, partitions and
+#  Numbr of days of data to be kept
+#
+while read -r partition_info_row;
+do
+ echo line ${partition_info_row}
+TableOwner=`echo ${partition_info_row} | awk '{split ($0,b," "); print b[1]}'`
+TableName=`echo ${partition_info_row} | awk '{split ($0,b," "); print b[2]}'`
+KeepDays=`echo ${partition_info_row} | awk '{split ($0,b," "); print b[3]}'`
+
+echo Owner=${TableOwner}
+echo Table=${TableName}
+echo Days=${KeepDays}
+#
+#
+echo "Generate drop partitions Script...">>$logfoutput
+echo "==============================================================================================">>$logfoutput
+echo "Running at `date`">>$logfoutput
+echo "Dropping Partitions for ${TableOwner}.${TableName}">>$logfoutput
+echo "==============================================================================================">>$logfoutput
+sqlplus -s "/ as sysdba" <<EOF
+
+Insert into  ${TempTable}
+SELECT table_owner,table_name,to_lob(high_value) high_value,partition_name,tablespace_name
+   FROM (SELECT * FROM dba_tab_partitions
+             WHERE table_owner in  ('${TableOwner}')
+AND   table_name  in ('${TableName}')
+and partition_name <>'P1' and partition_position<>1 and interval <> 'NO') order by table_name,partition_name;
+commit
+
+set verify off feed off tab off echo off pages 0 lines 199 trims on
+spool $RUN_DROP_SQL_SCR APPEND
+select 'prompt "alter table '||table_owner||'.'||table_name||' truncate partition '||partition_name|| '-- '
+    || to_date(substr(HIGH_VALUE,(instr(HIGH_VALUE,' ')+1 ),19),'YYYY-MM-DD HH24:MI:SS')
+    || ' UPDATE GLOBAL INDEXES parallel  $Parallel  ;"'
+    from $TempTable
+  where to_date(substr(HIGH_VALUE,(instr(HIGH_VALUE,' ')+1 ),19),'YYYY-MM-DD HH24:MI:SS')<sysdate-${KeepDays}
+     and table_owner='${TableOwner}' and table_name='${TableName}' and DBMS_LOB.substr(high_value, 8) != 'MAXVALUE'
+  order by partition_name;
+select 'alter table '||table_owner||'.'||table_name||' truncate partition '||partition_name||' UPDATE GLOBAL INDEXES parallel  $Parallel ;'
+    from $TempTable
+  where to_date(substr(HIGH_VALUE,(instr(HIGH_VALUE,' ')+1 ),19),'YYYY-MM-DD HH24:MI:SS')<sysdate-${KeepDays} and table_owner='${TableOwner}' and table_name='${TableName}' and DBMS_LOB.substr(high_value, 8) != 'MAXVALUE'
+      order by partition_name;
+
+select 'prompt "alter table '||table_owner||'.'||table_name||' drop partition '||partition_name|| '-- '
+    || to_date(substr(HIGH_VALUE,(instr(HIGH_VALUE,' ')+1 ),19),'YYYY-MM-DD HH24:MI:SS')
+    || ' UPDATE GLOBAL INDEXES parallel  $Parallel  ;"'
+    from $TempTable
+  where to_date(substr(HIGH_VALUE,(instr(HIGH_VALUE,' ')+1 ),19),'YYYY-MM-DD HH24:MI:SS')<sysdate-${KeepDays}
+     and table_owner='${TableOwner}' and table_name='${TableName}' and DBMS_LOB.substr(high_value, 8) != 'MAXVALUE'
+  order by partition_name;
+select 'alter table '||table_owner||'.'||table_name||' drop partition '||partition_name||' UPDATE GLOBAL INDEXES parallel  $Parallel ;'
+    from $TempTable
+  where to_date(substr(HIGH_VALUE,(instr(HIGH_VALUE,' ')+1 ),19),'YYYY-MM-DD HH24:MI:SS')<sysdate-${KeepDays} and table_owner='${TableOwner}' and table_name='${TableName}'  and DBMS_LOB.substr(high_value, 8) != 'MAXVALUE'
+     order by partition_name;
+select '--' from dual;
+PROMPT --  End of Partition Drop for ${TableOwner}.${TableName}
+select '--' from dual;
+EOF
+echo "=============================================================================================="
+
+echo "Running ..." >> $logfoutput
+#
+done < ${PartInfoFile}
+echo 'EXIT' >> $RUN_DROP_SQL_SCR
+echo '--  End of Partition Drop Script ' >> $RUN_DROP_SQL_SCR
+#
+#  Execute the previous created file to drop partition using @....
+#
+#
+echo  TRUNCATING DROPPINTG
+sqlplus -s "/ as sysdba" <<EOF >> $logfoutput
+set echo on
+set termout on
+SET TERM ON
+set feedback on
+select ora_database_name from dual;
+--select $TableOwner,$TableName,round(sum(bytes/1024/1024/1024)); from dba_segments where table_owner='${TableOwner}' and table_name='${TableName};
+@$RUN_DROP_SQL_SCR
+select ora_database_name from dual;
+EOF
+echo "==============================================================================================" >> $logfoutput
+echo "`cat $logfoutput | grep -i altered | wc -l` parttitions dropped." >> $logfoutput
+echo "==============================================================================================" >> $logfoutput
+maillist='VDSI-IaaSDaaS-ACSS@verizonwireless.com,sathish.kumaraguru@verizon.com,vimal.sudersan@verizon.com,selladurai.mani@verizon.com'
+if grep "^ORA-" $logfoutput
+  then
+   mailx -r TP_PURGE_PARTITIONS@`hostname` -s "Dropping of Old partitions on $ORACLE_SID  Unsuccessful." $maillist < $logfoutput
+   exit 2
+  else
+  mailx -r TP_PURGE_PARTITIONS@`hostname` -s "Dropping of Old partitions on $ORACLE_SID Successful." $maillist < $logfoutput
+fi
+exit
+#
+#
+#  The following not used at this time
+#
+# create syntax for rebuilding unusable indexes
+#
+sqlplus -s /nolog <<-EOF
+connect \'/ as sysdba
+spool ${IndexRebuild}
+select distinct 'alter index '||index_owner||'.'|| index_name ||' rebuild partition ' || partition_name || ' parallel $Parallel
+  online;' from dba_ind_partitions where status='UNUSABLE';
+select distinct 'alter index '||index_owner||'.'|| index_name ||' noparallel;' from dba_ind_partitions where status='UNUSABLE';
+select distinct 'alter index '||owner||'.'|| index_name|| ' rebuild parallel $parallel online;' from dba_indexes where
+  status='UNUSABLE';
+  select distinct 'alter index '||owner||'.'||index_name ||' noparallel;' from dba_indexes where status='UNUSABLE';
+--
+prompt EXIT
+spool off
+EOF
+exit
+echo ${IndexRebuild}
+--
+-- execute ..above file ${IndexRebuild}
+--
+#
