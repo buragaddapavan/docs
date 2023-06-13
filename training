@@ -1,0 +1,106 @@
+-- create groups
+groupadd -g 501 oinstall
+groupadd -g 54322 dba
+groupadd -g 54323 oper
+
+-- create user
+useradd -u 54321 -g oinstall -G oinstall,dba,oper oracle
+
+
+mkdir -p /u01/app/oracle/product/19   -- create directory 
+chown -R oracle:oinstall /u01         -- change ownership of directory
+chmod -R 777 /u01                     -- change permission of directory 
+
+-- Install 19c software
+cd /u01/app/oracle/product/19c
+unzip LINUX.X64_193000_db_home.zip
+export ORACLE_HOME=/u01/app/oracle/product/19c
+export ORACLE_BASE=/u01/app/oracle
+export ORA_INVENTORY=/u01/app/oraInventory
+
+
+./runInstaller -silent \
+-ignorePrereqFailure \
+-responseFile ${ORACLE_HOME}/install/response/db_install.rsp \
+ORACLE_HOME=${ORACLE_HOME} \
+ORACLE_BASE=${ORACLE_BASE} \
+INVENTORY_LOCATION=${ORA_INVENTORY} \
+UNIX_GROUP_NAME=oinstall \
+oracle.install.db.OSDBA_GROUP=oinstall \
+oracle.install.db.OSBACKUPDBA_GROUP=oinstall \
+oracle.install.db.OSDGDBA_GROUP=oinstall \
+oracle.install.db.OSKMDBA_GROUP=oinstall \
+oracle.install.db.OSRACDBA_GROUP=oinstall \
+oracle.install.option=INSTALL_DB_SWONLY \
+oracle.install.db.InstallEdition=EE
+
+
+
+-- create database
+dbca -silent -createDatabase -templateName General_Purpose.dbc -gdbName testdb -sid testdb -createAsContainerDatabase false -emConfiguration NONE 
+-datafileDestination /u01/app/oracle/oradata/testdb -storageType FS -characterSet AL32UTF8 -totalMemory 2048 -recoveryAreaDestination /u01/FRA -sampleSchema true
+
+or
+
+dbca -silent -createDatabase -templateName General_Purpose.dbc -gdbname smalldb -sid smalldb -responseFile NO_VALUE -characterSet AL32UTF8 
+-memoryPercentage 10 -emConfiguration LOCAL -datafiledestination /u01/app/oracle/oradata -sysPassword pwd1 -systemPassword pwd2 -dbsnmpPassword pwd3 
+-sysmanPassword pwd4
+
+.....................................................
+-- Create Tablespace
+CREATE TABLESPACE supputbs DATAFILE '/u01/app/oracle/oradata/SUPRAJA/supputbs01.dbf'  SIZE 100M;
+
+-- Increase Size of an Existing Datafile
+alter database datafile '/u01/app/oracle/oradata/SUPRAJA/supputbs01.dbf' resize 150M;
+
+-- Add New Datafile to Increase the Size of a Tablespace
+ALTER TABLESPACE supputbs ADD DATAFILE '/u01/app/oracle/oradata/SUPRAJA/supputbs02.dbf'  SIZE 100M autoextend on maxsize 2g;
+
+-- Rename Tablespace
+ALTER TABLESPACE supputbs RENAME TO pavantbs;
+
+-- Drop Tablespace
+DROP TABLESPACE supputbs INCLUDING CONTENTS AND DATAFILES;
+ 
+-- Drop a Specific datafaile from a Tablespace
+ALTER TABLESPACE supputbs drop DATAFILE '/u01/app/oracle/oradata/SUPRAJA/supputbs02.dbf'
+
+-- Bring Tablespace Online or Offline
+ALTER TABLESPACE supputbs OFFLINE;
+ALTER TABLESPACE supputbs ONLINE;
+
+-- Set a Tablespace as Read-Only Temporarily
+ALTER TABLESPACE supputbs READ ONLY;
+
+-- Rename/Move DataFile
+alter database move datafile '/u01/app/oracle/oradata/SUPRAJA/supputbs01.dbf' to '/u02/app/oracle/oradata/SUPRAJA/supputbs01.dbf' reuse;
+
+
+
+
+--- create user
+CREATE USER suppu_user
+  IDENTIFIED by suppu_user123
+  DEFAULT TABLESPACE suprajatbs
+  QUOTA 10M ON suprajatbs
+  PROFILE external_user_profile1;
+
+--- Give permission
+GRANT create session TO suppu_user;
+or
+grant dba to suppu_user;
+
+-- connect to new user
+sqlplus / as sysdba
+conn suppu_user/suppu_user;
+
+--- create table
+CREATE TABLE customers2
+(
+cust_id NUMBER,
+cust_name VARCHAR2(50),
+cust_email VARCHAR2(20),
+cust_phone VARCHAR2(20),
+cust_area VARCHAR2(30),
+CONSTRAINT cust_pk2 PRIMARY KEY(cust_id,cust_area)
+);
