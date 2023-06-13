@@ -151,6 +151,6 @@ LOGFILE=impdp_supraja_user.log REMAP_SCHEMA=suppu_user:pavan_user
 impdp \'/ as sysdba \' directory=datapump_dir JOB_NAME=impdp_supraja_user DUMPFILE=expdp_supraja_user.dmp 
 LOGFILE=impdp_supraja_user.log remap_table=supraja_user.customers2:customers3
 
--- Schema remap
+-- Table import options
 impdp \'/ as sysdba \' directory=datapump_dir JOB_NAME=impdp_supraja_user DUMPFILE=expdp_supraja_user.dmp 
 LOGFILE=impdp_supraja_user.log SCHEMA=suppu_user TABLE_EXISTS_ACTION=[SKIP | APPEND | TRUNCATE | REPLACE]
