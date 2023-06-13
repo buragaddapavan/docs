@@ -78,11 +78,13 @@ alter database move datafile '/u01/app/oracle/oradata/SUPRAJA/supputbs01.dbf' to
 
 
 
+
+
+
 --- create user
 CREATE USER suppu_user
   IDENTIFIED by suppu_user123
   DEFAULT TABLESPACE suprajatbs
-  QUOTA 10M ON suprajatbs
   PROFILE external_user_profile1;
 
 --- Give permission
@@ -92,7 +94,7 @@ grant dba to suppu_user;
 
 -- connect to new user
 sqlplus / as sysdba
-conn suppu_user/suppu_user;
+conn suppu_user/suppu_user123;
 
 --- create table
 CREATE TABLE customers2
@@ -104,3 +106,51 @@ cust_phone VARCHAR2(20),
 cust_area VARCHAR2(30),
 CONSTRAINT cust_pk2 PRIMARY KEY(cust_id,cust_area)
 );
+
+-- Add column
+ALTER TABLE customers2 ADD cust_address VARCHAR2(200);
+ALTER TABLE customers2 MODIFY cust_email varchar2(60);
+
+
+Backup using datapump :
+
+-- Create Data Pump Directory 
+mkdir -p /u02/dp_exp_dir
+
+sqlplus / as sysdba
+create directory datapump_dir as '/u02/dp_exp_dir';
+grant read,write on directory datapump_dir to supraja_user; 
+
+-- Full Database Export
+expdp suppu_user/suppu_user123 directory=datapump_dir JOB_NAME=expdp_supraja_user DUMPFILE=expdp_supraja_user.dmp 
+LOGFILE=expdp_supraja_user.log full=y
+
+-- Metadata Export
+expdp \'/ as sysdba \' directory=datapump_dir JOB_NAME=expdp_supraja_user DUMPFILE=expdp_supraja_user.dmp 
+LOGFILE=expdp_supraja_user.log content=METADATA_ONLY
+
+-- Data Export
+expdp \'/ as sysdba \' directory=datapump_dir JOB_NAME=expdp_supraja_user DUMPFILE=expdp_supraja_user.dmp 
+LOGFILE=expdp_supraja_user.log content=DATA_ONLY
+
+-- Schema Export
+expdp \'/ as sysdba \' directory=datapump_dir JOB_NAME=expdp_supraja_user DUMPFILE=expdp_supraja_user.dmp 
+LOGFILE=expdp_supraja_user.log schemas=suppu_user
+
+-- Table Export
+expdp \'/ as sysdba \' directory=datapump_dir JOB_NAME=expdp_supraja_user DUMPFILE=expdp_supraja_user.dmp 
+LOGFILE=expdp_supraja_user.log tables='suppu_user.customers2'
+
+
+--------------Import---------------
+-- Schema remap
+impdp \'/ as sysdba \' directory=datapump_dir JOB_NAME=impdp_supraja_user DUMPFILE=expdp_supraja_user.dmp 
+LOGFILE=impdp_supraja_user.log REMAP_SCHEMA=suppu_user:pavan_user
+
+-- Import Table with Remap
+impdp \'/ as sysdba \' directory=datapump_dir JOB_NAME=impdp_supraja_user DUMPFILE=expdp_supraja_user.dmp 
+LOGFILE=impdp_supraja_user.log remap_table=supraja_user.customers2:customers3
+
+-- Schema remap
+impdp \'/ as sysdba \' directory=datapump_dir JOB_NAME=impdp_supraja_user DUMPFILE=expdp_supraja_user.dmp 
+LOGFILE=impdp_supraja_user.log SCHEMA=suppu_user TABLE_EXISTS_ACTION=[SKIP | APPEND | TRUNCATE | REPLACE]
