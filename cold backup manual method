@@ -1,23 +1,25 @@
 SOURCE DB – DEMO08NOV (noarchivelog)
 TARGET DB – DEMO08CL
 
+Find datafiles,tempfiles,redo log files and control file locations :
+select file_name from dba_data_files;  --- To find datafiles name and location
+select file_name from dba_temp_files;   --- To find tempfiles name and location
+select member from v$logfile;          --- To find redo log files name and location
+select name from v$controlfile;        --- To find Control files name and location
 
-select file_name from dba_data_files;
-select file_name from dba_temp_files;
-select member from v$logfile;
-select name from v$controlfile;
-
-alter database backup controlfile to '/tmp/control.ctl';
-
+Take Control file backup :
 alter database backup controlfile to trace as '/tmp/control.sql' resetlogs;
 
+Create necessary directories on target servers :
 mkdir /u02/oracle/oradata/DEMO08CL
 mkdir -p /u01/app/oracle/admin/DEMO08CL/adump
 
+Take Pfile backup :
 create pfile='/tmp/initDEMO08CL.ora' from spfile;
 
 shutdown immediate old db
 
+Copy datafiles and redolog files backups :
 cp /u02/oracle/oradata/DEMO08NOV/* /u02/oracle/oradata/DEMO08CL
 
 
