@@ -22,10 +22,11 @@ shutdown immediate old db
 Copy datafiles and redolog files backups :
 cp /u02/oracle/oradata/DEMO08NOV/* /u02/oracle/oradata/DEMO08CL
 
-
+-- Now start new db
 
 startup nomount pfile=/tmp/initDEMO08CL.ora
 
+-- create control file for new db
 If you wish to keep the database same as source, then you can use the command REUSE DATABASE command.
 Here we have use SET DATABASE, Because we are cloning the database in target with a new db name.
 
@@ -49,7 +50,7 @@ DATAFILE
 CHARACTER SET AL32UTF8
 ;
 
-	
+-- Now start db in open mode
 ALTER DATABASE OPEN RESETLOGS;
 
 You can get this tempfile script in the end controlfile script .
