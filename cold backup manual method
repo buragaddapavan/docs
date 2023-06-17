@@ -10,10 +10,6 @@ select name from v$controlfile;        --- To find Control files name and locati
 Take Control file backup :
 alter database backup controlfile to trace as '/tmp/control.sql' resetlogs;
 
-Create necessary directories on target servers :
-mkdir /u02/oracle/oradata/DEMO08CL
-mkdir -p /u01/app/oracle/admin/DEMO08CL/adump
-
 Take Pfile backup :
 create pfile='/tmp/initDEMO08CL.ora' from spfile;
 
@@ -23,6 +19,10 @@ Copy datafiles and redolog files backups :
 cp /u02/oracle/oradata/DEMO08NOV/* /u02/oracle/oradata/DEMO08CL
 
 -- Now start new db
+
+Create necessary directories on target servers :
+mkdir /u02/oracle/oradata/DEMO08CL
+mkdir -p /u01/app/oracle/admin/DEMO08CL/adump
 
 startup nomount pfile=/tmp/initDEMO08CL.ora
 
