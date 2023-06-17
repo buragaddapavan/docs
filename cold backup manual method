@@ -1,0 +1,55 @@
+SOURCE DB – DEMO08NOV (noarchivelog)
+TARGET DB – DEMO08CL
+
+
+select file_name from dba_data_files;
+select file_name from dba_temp_files;
+select member from v$logfile;
+select name from v$controlfile;
+
+alter database backup controlfile to '/tmp/control.ctl';
+
+alter database backup controlfile to trace as '/tmp/control.sql' resetlogs;
+
+mkdir /u02/oracle/oradata/DEMO08CL
+mkdir -p /u01/app/oracle/admin/DEMO08CL/adump
+
+create pfile='/tmp/initDEMO08CL.ora' from spfile;
+
+shutdown immediate old db
+
+cp /u02/oracle/oradata/DEMO08NOV/* /u02/oracle/oradata/DEMO08CL
+
+
+
+startup nomount pfile=/tmp/initDEMO08CL.ora
+
+If you wish to keep the database same as source, then you can use the command REUSE DATABASE command.
+Here we have use SET DATABASE, Because we are cloning the database in target with a new db name.
+
+
+CREATE CONTROLFILE SET DATABASE "DEMO08CL" RESETLOGS  NOARCHIVELOG
+    MAXLOGFILES 16
+    MAXLOGMEMBERS 3
+    MAXDATAFILES 100
+    MAXINSTANCES 8
+    MAXLOGHISTORY 292
+LOGFILE
+  GROUP 1 '/u02/oracle/oradata/DEMO08CL/redo01.log'  SIZE 50M BLOCKSIZE 512,
+  GROUP 2 '/u02/oracle/oradata/DEMO08CL/redo02.log'  SIZE 50M BLOCKSIZE 512,
+  GROUP 3 '/u02/oracle/oradata/DEMO08CL/redo03.log'  SIZE 50M BLOCKSIZE 512
+-- STANDBY LOGFILE
+DATAFILE
+  '/u02/oracle/oradata/DEMO08CL/system01.dbf',
+  '/u02/oracle/oradata/DEMO08CL/sysaux01.dbf',
+  '/u02/oracle/oradata/DEMO08CL/undotbs01.dbf',
+  '/u02/oracle/oradata/DEMO08CL/users01.dbf'
+CHARACTER SET AL32UTF8
+;
+
+	
+ALTER DATABASE OPEN RESETLOGS;
+
+You can get this tempfile script in the end controlfile script .
+ALTER TABLESPACE TEMP ADD TEMPFILE '/u02/oracle/oradata/DEMO08CL/temp01.dbf'
+     SIZE 127926272  REUSE AUTOEXTEND ON NEXT 655360  MAXSIZE 32767M;
