@@ -1,0 +1,17 @@
+RMAN backup :
+
+rman target /
+backup database plus archivelog;                    -- this will backup database,archivelog,spfile and control file
+
+
+RMAN restore :
+
+RMAN> STARTUP force NOMOUNT;
+RMAN> restore spfile from "/backup/rman/spfile-12345-201410"; 
+RMAN> shutdown immediate
+RMAN> STARTUP NOMOUNT;
+RMAN> RESTORE CONTROLFILE FROM "/backup/rman/ctl_c-12345-20141003-03"; 
+RMAN> alter database mount;
+RMAN> RESTORE DATABASE;
+RMAN> RECOVER DATABASE;
+RMAN> ALTER DATABASE OPEN RESETLOGS;
