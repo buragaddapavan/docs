@@ -154,3 +154,23 @@ LOGFILE=impdp_supraja_user.log remap_table=supraja_user.customers2:customers3
 -- Table import options
 impdp \'/ as sysdba \' directory=datapump_dir JOB_NAME=impdp_supraja_user DUMPFILE=expdp_supraja_user.dmp 
 LOGFILE=impdp_supraja_user.log SCHEMA=suppu_user TABLE_EXISTS_ACTION=[SKIP | APPEND | TRUNCATE | REPLACE]
+
+
+Datapump new parameters :
+parallel=4
+logtime=all
+views_as_tables=emp_v
+compression=all
+
+Stop Datapump job:
+SELECT * FROM DBA_DATAPUMP_JOBS;
+impdp system/manager attach=Job_Name
+Import> stop_job=immediate
+
+Start Datapump job:
+impdp system/manager attach=Job_Name
+Import> start_job
+Import> status
+
+
+
