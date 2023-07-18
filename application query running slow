@@ -1,0 +1,40 @@
+application query running slow
+
+check temp space , buffer cache....
+any db parameter modified..
+network issue..
+query exactly same or modified...
+lot of dmls would have happened recently.. hence stats might be outdated.
+any jobs running 
+any bg process consuming more memory..
+was table index dropped today ?
+was there any database patch aapplied recently ?
+
+awr report 
+load profile
+  db time-- amount of time oracle  spent on database user calls
+  db cpu - amount of time server spent on user calls
+  redo size - 
+  physical read - Whenever a new data block is requested, it has to be fetched from the physical datafiles residing on the physical disks
+  physical write - Whenever a new data block is insert, it has to be fetched from the physical datafiles residing on the physical disks
+  user calls - 
+  transaction - how many per second 
+  parsing hard
+  
+wait events
+  DB File Sequential Read - it occurs when we are trying to access data using index and Oracle is waiting for the read of index block from disk to    buffer cache to complete
+  Db File Scattered Read - except that Oracle will read multiple data blocks. Multi-block reads are typically used on full table scans. 
+  Library Cache lock - compilation/Parsing of Package/Procedure/Function
+  Control File Parallel Write - CKPT process write checkpoint position in online redo logs to control files every 3 secs
+  Buffer busy waits - When a session wants to access data block in buffer cache that is currently in use by some other session. 
+  
+sql statistics 
+  sql ordered by cpu time
+  SQL ordered by reads
+It is the number of physical reads from the disks before we load the buffer cache and present the data to user access.
+  SQL ordered by Gets/Buffer Gets
+It is the number of logical reads from the buffer cache to the user process. 
+From Oracle’s point of view, buffer get is logical I/O  and disk read is physical I/O.  
+
+ http://sandeepnandhadba.blogspot.com/2014/06/sql-ordered-by-gets.html
+ https://www.youtube.com/watch?v=QPJL1fswbO4
