@@ -1,14 +1,14 @@
 application query running slow
 
-check temp space , buffer cache....
-any db parameter modified..
+check temp space ....
 network issue..
 query exactly same or modified...
 lot of dmls would have happened recently.. hence stats might be outdated.
-any jobs running 
+any jobs running (datapump,rman,batch jobs)
 any bg process consuming more memory..
 was table index dropped today ?
 was there any database patch aapplied recently ?
+sql profile/hash value changed for query ?
 
 awr report 
 load profile
