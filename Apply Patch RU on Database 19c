@@ -1,0 +1,42 @@
+cd /u01/app/backup/
+unzip p29834717_190000_Linux-x86-64.zip
+
+List patches which were applied
+$ORACLE_HOME/OPatch/opatch lsinv -oh /u01/app/oracle/product/19.0.0/dbhome_1
+
+Check Conflict
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -ph /u01/app/backup/29834717
+
+
+Shutdown Database
+
+Stop LISTENER
+lsnrctl stop LISTENER
+
+Backup Oracle Home / Inventory
+
+Apply Patch
+$ORACLE_HOME/OPatch/opatch apply -oh /u01/app/oracle/product/19.0.0/dbhome_1 -local
+
+List Patches
+$ORACLE_HOME/OPatch/opatch lsinv -oh /u01/app/oracle/product/19.0.0/dbhome_1
+
+
+Startup Database
+
+
+Apply SQL changes
+$ORACLE_HOME/OPatch/datapatch -verbose
+
+
+Verify from dba_registry_sqlpatch
+SELECT * FROM   sys.dba_registry_sqlpatch ORDER by action_time;
+
+
+Start LISTENER
+lsnrctl start LISTENER
+
+
+Verify INVALID objects
+select count(*) from dba_objects where status='INVALID';
+
