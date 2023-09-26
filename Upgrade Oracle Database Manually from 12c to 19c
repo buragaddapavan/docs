@@ -1,0 +1,42 @@
+
+PRE-UPGRADE TASKS
+----------------------------------------------------------
+Take DB , tns files and pfile,spfile,password files Backups
+
+check INVALID OBJECTS 
+select count(*) from dba_objects where status='INVALID';
+Start preupgrade utility
+$ORACLE_HOME/jdk/bin/java -jar $ORACLE_HOME/rdbms/admin/preupgrade.jar FILE DIR /home/oracle/CID/preupgrade
+Gather stale data dictionary statistics
+        EXECUTE DBMS_STATS.GATHER_DICTIONARY_STATS;
+Verify tablespace sizes
+PURGE DBA_RECYCLEBIN;
+Refresh MVs
+Run preupgrade_fixups.sql
+Verify archive log dest size
+Stop LISTENER
+      ps -ef | grep tns
+	  lsnrctl stop LISTENER
+Create Restore Point
+		create restore point pre_upgrade guarantee flashback database;
+		
+..........................
+UPGRADE TASK
+
+Shutdown Database
+Startup DB in Upgrade mode from 19c home
+	sqlplus / as sysdba
+	startup upgrade;
+Run dbupgrade	
+	./dbupgrade
+Starup DB from 19c home
+
+
+......................
+
+POST-UPGRADE TASKS
+Run utlrp.sql
+Run postupgrade_fixups.sql
+Upgrade Timezone
+Run utlusts.sql
+Run catuppst.sql
