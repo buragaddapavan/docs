@@ -1,0 +1,158 @@
+Source:
+
+1. Take DB backup
+
+mkdir -p /backup/db
+
+cat backup_DB.cmd
+run
+{
+allocate channel c1 device type disk;
+allocate channel c2 device type disk;
+allocate channel c3 device type disk;
+backup as compressed backupset incremental level 0 database format '/backup/db/primary_%U';
+backup as compressed backupset archivelog all format '/backup/db/primary_%U';
+backup current controlfile for standby format '/backup/db/primary_control';
+release channel c1;
+release channel c1;
+release channel c1;
+}
+
+
+run
+{
+allocate channel c1 device type disk;
+backup current controlfile for standby format '/backup/db/standby.ctl';
+release channel c1;
+}
+
+command format:
+nohup rman target / cmdfile=backup_DB.cmd msglog=<LOGNAME>.log &
+##########################################################################################
+
+2.Take pfile backup
+
+3.Set up DataGuard related parameters on primary(restart required)
+alter system set FAL_SERVER=standby scope=both sid='*';
+alter system set DB_FILE_NAME_CONVERT='standby','primary' scope=spfile sid='*';
+alter system set LOG_FILE_NAME_CONVERT='standby','primary' scope=spfile sid='*';
+alter system set log_archive_dest_2='SERVICE=standby DB_UNIQUE_NAME=standby LGWR ASYNC NOAFFIRM DELAY=90 OPTIONAL COMPRESSION=ENABLE MAX_FAILURE=10 VALID_FOR=(ONLINE_LOGFILE,PRIMARY_ROLE)' scope=both sid='*';
+alter system set log_archive_config='DG_CONFIG=(primary,standby)' scope=both sid='*';
+
+4.Enabled forced logging by issuing the following command.
+ALTER DATABASE FORCE LOGGING;
+-- Make sure at least one logfile is present.
+ALTER SYSTEM SWITCH LOGFILE;
+
+
+copied backup to target or mount /backup on new RDB2 VMs
+
+Target:
+=======
+1.Pfile:
+
+#################################################################################################
+Copy pfile from source and update following parameters in pfile initstandby.ora
+
+comment out cluster parameters
+
+*.DB_UNIQUE_NAME=standby
+*.control_files='+DATADG/standby/control01.ctl','+REDODG1/standby/control02.ctl','+REDODG2/standby/control03.ctl'
+*.db_file_name_convert='+DATA/primary/','+DATA/standby/','+DATA/CFIPRD1/','+DATA/standby/'
+*.log_file_name_convert='+REDODG1/primary/','+REDODG1/standby/','+REDODG2/primary/','+REDODG2/standby/','+ARCHDG/primary/','+ARCHDG/standby/'
+*.log_archive_dest_1='LOCATION=+ARCHDG/standby  VALID_FOR=(ALL_LOGFILES,ALL_ROLES)  DB_UNIQUE_NAME=standby'
+*.log_archive_dest_2='SERVICE=primary DB_UNIQUE_NAME=primary LGWR ASYNC NOAFFIRM DELAY=90 OPTIONAL COMPRESSION=ENABLE MAX_FAILURE=10 VALID_FOR=(ONLINE_LOGFILE,PRIMARY_ROLE)'
+*.log_archive_config='DG_CONFIG=(standby,primary)'
+*.fal_server='primary'
+*.remote_listener='OSSPRDRDB2-scan.globetel.com:1557'  -- update 
+*.audit_file_dest='/u01/app/oracle/admin/standby/adump'
+*.core_dump_dest='/u01/app/oracle/diag/rdbms/standby/standby/cdump'
+
+
+###################################################################################################
+
+2.copy password file fom source
+
+ASMCMD> pwget --asm
++DATADG/orapwASM
+pwcopy +DATADG/orapwASM /tmp
+
+copy password file to new VMs
+orapwd file='/u01/app/oracle/product/19/dbs/orapwCFIPRD1U_1' ENTRIES=10 force=y ignorecase=Y password='Manager$$'
+
+
+3.Created directories structure
+mkdir -p /u01/app/oracle/admin/standby/adump
+mkdir -p /u01/app/oracle/diag/rdbms/standby/standby/cdump
+
+4.Clone
+startup nomount pfile=initstandby.ora
+
+###############################################################################################
+
+cat restore_DB.cmd
+
+run
+ {
+ allocate auxiliary channel c1 device type disk;
+allocate auxiliary channel c2 device type disk;
+ allocate auxiliary channel c3 device type disk;
+duplicate target database for standby backup location '/backup/db' nofilenamecheck;
+release channel c1;
+ release channel c2;
+ release channel c3;
+ }
+
+alter system set standby_file_management='MANUAL' ;
+
+alter database add standby logfile thread 1 group 4 ('/redolog1/CFIDEV02S/onlinelog/standby04a.log','/redolog2/CFIDEV02S/onlinelog/standby04b.log') size 32g;
+alter database add standby logfile thread 1 group 5 ('/redolog1/CFIDEV02S/onlinelog/standby05a.log','/redolog2/CFIDEV02S/onlinelog/standby05b.log') size 32g;
+alter database add standby logfile thread 1 group 6 ('/redolog1/CFIDEV02S/onlinelog/standby06a.log','/redolog2/CFIDEV02S/onlinelog/standby06b.log') size 32g;
+alter database add standby logfile thread 1 group 7 ('/redolog1/CFIDEV02S/onlinelog/standby07a.log','/redolog2/CFIDEV02S/onlinelog/standby07b.log') size 32g;
+
+alter system set standby_file_management='AUTO' ;
+
+command format:
+nohup rman auxiliary / cmdfile=restore_DB.cmd msglog=<LOGNAME>.log &
+
+spfile create
+
+####################################################################################################
+
+5.TNS Entry on source & target:
+
+primary =
+  (DESCRIPTION=
+    (ADDRESS=
+      (PROTOCOL=TCP)
+      (HOST=OSSPRDRDB-scan.globetel.com)
+      (PORT=1557)
+    )
+    (CONNECT_DATA=
+      (SERVER=dedicated)
+      (SERVICE_NAME=primary)
+    )
+  )
+
+standby =
+  (DESCRIPTION=
+    (ADDRESS=
+      (PROTOCOL=TCP)
+      (HOST=OSSPRDRDB2-scan.globetel.com)
+      (PORT=1557)
+    )
+    (CONNECT_DATA=
+      (SERVER=dedicated)
+      (SERVICE_NAME=standby)
+    )
+  )
+
+
+  ############################################################################################
+  
+7. Bringup MRP on only one node:
+
+alter database recover managed standby database using current logfile disconnect;
+
+check status:
+SQL> select thread#,sequence#,process,status from gv$managed_standby;
