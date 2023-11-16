@@ -34,7 +34,17 @@ oracle.install.db.OSRACDBA_GROUP=oinstall \
 oracle.install.option=INSTALL_DB_SWONLY \
 oracle.install.db.InstallEdition=EE
 
+The first Script that we run is ‘orainstRoot.sh’ which is located in $ORACLE_BASE/oraInventory path.We execute ‘orainstRoot.sh’ script for the following purposes:
 
+1)It creates the inventory pointer file (/etc/oraInst.loc),This file shows the inventory location and group it is linked to.
+2)It Changes groupname of the oraInventory directory to oinstall group.
+
+The Second script that we run is ‘root.sh’ script which is located in $ORACLE_HOME path.We execute ‘root.sh’ for the following purposes:
+
+1)It will Creates a /etc/oratab file.This is the file which we use to make automatic Database shutdown and startup.
+It is very important file.
+2)It Sets the Oracle base and home environments.
+3)It Updates the Oracle inventory file.
 
 -- create database
 dbca -silent -createDatabase -templateName General_Purpose.dbc -gdbName testdb -sid testdb -createAsContainerDatabase false -emConfiguration NONE 
