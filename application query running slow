@@ -13,7 +13,7 @@ was table index dropped today ?
 was there any database patch aapplied recently ?
 sql profile/hash value changed for query ?
 
-awr report 
+awr report   -- @ORACLE_HOME/rdbms/admin/awrrpt.sql
 load profile
   db time-- amount of time oracle  spent on database user calls
   db cpu - amount of time server spent on user calls
