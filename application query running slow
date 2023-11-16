@@ -1,6 +1,7 @@
 application query running slow
 
 check locks in the database
+check alert log file.
 Use TOP command to check the CPU usages
 check temp space ....
 network issue..
