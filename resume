@@ -1,0 +1,49 @@
+my self
+my name i s supraja
+i started my career with Adret infotech as database administrator.
+I have 3 years exp on oracle dba background 
+my roles and responsibilities;
+Installing and setting up oracle database
+Performing database refresh using expdp,impdp, utilities.
+managing tablespaces and filesystems.
+Applying Latest patches depending on the client requirement.
+Restoring Database using Cold backup.
+
+by usinb vpn i wll coonect to server
+
+now i am looking for new opportuntiy where i can execl my knowledge and skills at the sam etime contibute to growth of organization associated with.
+thanking for giving time to introduce myself.
+
+ticketing tool:jira.
+by using putty we connected to server.oracel version  11g 12c 19c.
+
+
+
+opatch -oh
+check conflict prereq checkconflictsohagainstwith detail
+shutdon database
+stop listner
+backup oracle gome
+list opactch  apply 
+
+list
+lsinv -oh
+startup databes 
+datapatch -verbose
+sql dba registry
+ 
+
+ check wether listener is running or not
+ps -ef|grep tns 
+
+lsnrctl status listener_name 
+listener service
+
+for db ps -ef|grep pmon
+
+
+
+
+*db lo isue unte -- then check alert log
+alert log location
+select * from v$ diag_info
