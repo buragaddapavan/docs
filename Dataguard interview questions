@@ -48,18 +48,17 @@ ALTER DATABASE RECOVER MANAGED STANDBY DATABASE DISCONNECT FROM SESSION;
 
 https://dbaclass.com/article/standby-redologs-oracle-dataguard/
 
-----------Switchover
-primary 
+----------Switchover manually 
+primary :
 SQL> alter database commit to switchover to standby;
 shutdown immediate
 startup nomount
 alter database mount standby database
 alter database recover managed standby database disconnect from session;
-
-standby
+standby :
 Step 7:-alter database commit to switchover to primary;
 
-
+----- Switchover using DGMGRL
 SHOW DATABASE VERBOSE ‘prime’;
 VALIDATE DATABASE ‘prime’;
 switchover to ‘stand’;
