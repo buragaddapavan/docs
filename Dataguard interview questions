@@ -1,0 +1,63 @@
+------Applying PSU Patch on Oracle Dataguard Environment------
+http://www.br8dba.com/how-to-apply-database-psu-patch-where-standby-in-place/#23
+Primary site disable the log shipping to the standby database and Stop MRP on standby site
+Shutdown Standby Database and Listener
+Apply PSU patch on Standby site
+Shutdown Primary database and Listener.
+Apply PSU Patch on Primary Site
+Enable Log shipping on Primary
+execute Post installation Scripts (datapatch)
+Monitor the redo apply from Primary to Standby
+
+------Upgrade on Oracle Dataguard Environment------
+http://oracle-help.com/dataguard/upgrading-oracle-database-with-a-physical-standby-database/
+Step 1: Install 12.1.0.2 binaries on both Primary and Standby Server.
+Step 2: Shut down Primary Database.
+Step 3: Shut down Standby Database.
+Step 4: Start database in mount stage  with new home exported
+Step 5: Upgrade Primary database
+
+
+Refreshing a Standby Database With INCREMENTAL FROM SCN Backups: Example
+Step 1: Create the Incremental Backup
+SQL> SELECT CURRENT_SCN FROM V$DATABASE;
+RMAN> BACKUP DEVICE TYPE DISK INCREMENTAL FROM SCN 750983 DATABASE
+     FORMAT '/tmp/incr_for_standby/bkup_%U';
+alter database create standby controlfile as '/oracle/standby0405.ctl';
+Step 2: Make the Incremental Backup Accessible at the Standby Database
+alter database create standby controlfile as '/oracle/standby0405.ctl';
+alter database mount standby database;
+Step 3: Catalog the Incremental Backup Files at the Standby Database
+Step 4: Apply the Incremental Backup to the Standby Database
+RMAN> RECOVER DATABASE NOREDO;
+https://ittutorial.org/resolve-gaps-roll-forward-in-data-guard-standby-apply-how-to-using-incremental-rman-backup/
+https://ittutorial.org/dataguard-status-standby-lag-monitoring-command-and-scripts-oracle-dba-scripts-all-in-one-2/
+
+ALTER DATABASE RECOVER MANAGED STANDBY DATABASE CANCEL;
+Shutdown immediate
+Startup mount
+RMAN> recover database from service prim noredo using compressed backupset;
+SHUTDOWN IMMEDIATE;
+STARTUP NOMOUNT;
+RMAN> restore standby controlfile from service prim;
+alter database mount;
+SWITCH DATABASE TO COPY;
+ALTER DATABASE OPEN READ ONLY;
+ALTER DATABASE RECOVER MANAGED STANDBY DATABASE DISCONNECT FROM SESSION;
+
+https://dbaclass.com/article/standby-redologs-oracle-dataguard/
+
+primary 
+SQL> alter database commit to switchover to standby;
+shutdown immediate
+startup nomount
+alter database mount standby database
+alter database recover managed standby database disconnect from session;
+
+standby
+Step 7:-alter database commit to switchover to primary;
+
+
+SHOW DATABASE VERBOSE ‘prime’;
+VALIDATE DATABASE ‘prime’;
+switchover to ‘stand’;
