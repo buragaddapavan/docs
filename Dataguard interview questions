@@ -18,7 +18,7 @@ Step 4: Start database in mount stage  with new home exported
 Step 5: Upgrade Primary database
 
 
-Refreshing a Standby Database With INCREMENTAL FROM SCN Backups: Example
+------Refreshing a Standby Database With INCREMENTAL FROM SCN Backups: Example
 Step 1: Create the Incremental Backup
 SQL> SELECT CURRENT_SCN FROM V$DATABASE;
 RMAN> BACKUP DEVICE TYPE DISK INCREMENTAL FROM SCN 750983 DATABASE
@@ -33,6 +33,7 @@ RMAN> RECOVER DATABASE NOREDO;
 https://ittutorial.org/resolve-gaps-roll-forward-in-data-guard-standby-apply-how-to-using-incremental-rman-backup/
 https://ittutorial.org/dataguard-status-standby-lag-monitoring-command-and-scripts-oracle-dba-scripts-all-in-one-2/
 
+------Refreshing a Standby Database using Recover from servie: Example
 ALTER DATABASE RECOVER MANAGED STANDBY DATABASE CANCEL;
 Shutdown immediate
 Startup mount
@@ -47,6 +48,7 @@ ALTER DATABASE RECOVER MANAGED STANDBY DATABASE DISCONNECT FROM SESSION;
 
 https://dbaclass.com/article/standby-redologs-oracle-dataguard/
 
+----------Switchover
 primary 
 SQL> alter database commit to switchover to standby;
 shutdown immediate
@@ -61,3 +63,15 @@ Step 7:-alter database commit to switchover to primary;
 SHOW DATABASE VERBOSE ‘prime’;
 VALIDATE DATABASE ‘prime’;
 switchover to ‘stand’;
+
+
+--- Logical Standby
+Stop MRP
+Now execute this on the primary database to build a dictionary in the redo data
+EXECUTE DBMS_LOGSTDBY.BUILD;
+Convert the standby database to a logical database
+ALTER DATABASE RECOVER TO LOGICAL STANDBY PARIS;
+shutdown immediate
+startup mount
+ALTER DATABASE OPEN RESETLOGS;
+ALTER DATABASE START LOGICAL STANDBY APPLY IMMEDIATE;
