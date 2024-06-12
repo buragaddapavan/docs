@@ -41,3 +41,126 @@ From Oracle’s point of view, buffer get is logical I/O  and disk read is physi
 
  http://sandeepnandhadba.blogspot.com/2014/06/sql-ordered-by-gets.html
  https://www.youtube.com/watch?v=QPJL1fswbO4
+
+
+
+
+
+AWR vs ADDM vs ASH
+-------------------
+AWR > Used to collect performance statistics, object usage statistics
+ASH > Top user events, Top queries, Top Sessions, Top DB objects
+ADDM > Analyses data in AWR to identify performance bottlenecks
+         - CPU Bottlenecks, Undersized Memory Structures, IO capacity issues
+		 - High Load SQL statement, DB Configuration issues
+
+Oracle Wait event Views
+------------------------
+V$event_name
+v$session_wait
+v$session_event
+V$system_event
+v$system_wait_class
+v$session_wait_class
+v$session_wait_history
+v$active_session_history
+v$event_histogram
+v$waitstat
+
+What is v$session_wait used for
+------------------------------
+-> Analysing real time Physical I/O waits for which active sessions are waiting
+-> V$SESSION_WAIT shows the file number in P1, the block number read in P2, and the number of blocks read in P3 
+(P1 and P2 let you determine for which segments the wait event is occurring).
+-> P1, P2, P3 values and description differs depending on wait events
+
+V$LOCK (LMODE and Request Columns)
+--------------------------------
+LMODE -> This is the "mode" of the "type" of the lock. The LMODE has values from 0 to 6, 6 being the most restrictive and 0 being least restrictive. 
+		 When a session obtains lock in mode 6 that mean it has obtained exclusive lock and no other session is allowed to update the data.
+		 
+REQUEST ->  represent the lock mode requested by a blocking session. The value in this column gets updated only when the session is blocked. 
+		    For example SID=35 may be blocked so LMODE column shows a value of 0, but REQUEST column shows a value of 6. 
+		    That means that SID 35 has requested lock mode 6 which has not yet assigned to it.
+
+Here are the values for LMODE and REQUEST:
+
+LMODE
+
+0,'None(0)',
+1,'Null(1)',
+2,'Row Share(2)',
+3,'Row Exclu(3)',
+4,'Share(4)',
+5,'Share Row Ex(5)',
+6,'Exclusive(6)')
+
+REQUEST
+
+0,'None(0)', |
+1,'Null(1)',
+2,'Row Share(2)',
+3,'Row Exclu(3)',
+4,'Share(4)',
+5,'Share Row Ex(5)',
+6,'Exclusive(6)')
+
+Direct Path Read
+---------------
+-> Oracle is reading data blocks directly into the session PGA instead of the buffer cache in the SGA
+-> Direct read I/O is normally used while accessing the temporary segments that reside on the disks
+-> operations include sorts, parallel queries, and hash joins.
+
+Free Buffer waits
+----------------
+-> when the session cannot find free buffers in the database buffer cache to read in data blocks or to build a consistent read (CR) image of a data block
+-> This could mean either the database buffer cache is too small, or the dirty blocks in the buffer cache are not getting written to the disk fast enough.
+-> The process will signal DBWR to free up dirty buffers but will wait on this event.
+
+Enq TX Row lock Contention
+--------------------------
+-> application level locking problem. (contention for row-level lock)
+-> This wait occurs when a transaction tries to update or delete rows that are currently locked by another transaction.
+
+Buffer busy waits
+----------------
+-> When a session wants to access data block in buffer cache that is currently
+in use by some other session. The other session is either reading the same data
+block into the buffer cache from datafile or modifying the one in buffer cache
+
+-> Waits by a session for data block change completion by some other session
+
+Library Cache lock
+-----------------------
+-> Oracle needs Library Cache Lock and Library Cache Pin for the compilation/Parsing of Package/Procedure/Function/View
+-> This is to ensure that no one is using the object during compilation/parsing as we are making some changes to the definition of the object
+and need to drop and recreate the object with the new definition.
+-> When a SQL statement is hard parsed by a session, the session has to acquire a library cache lock,
+so that the other sessions can be prevented from accessing or modifying the same object.
+-> If this event accumulates a lot of time, then it may indicate that the shared pool is too small or is being flushed regularly.
+Otherwise, it indicates that database object definitions are being changed regularly.
+-> Apart from hard parsing, if the session wants to change the definition of the object specified in the SQL or do any modifications,
+then it has to acquire a library cache lock along with the library cache pin.
+-> It is pinning because it needs the dictionary information to be loaded in the memory to access the same to modify/change the object.
+
+Control File Parallel Write
+---------------------------
+-> When the session waits for completion of write requests to all of control files.
+-> CKPT process write checkpoint position in online redo logs to control files every 3 secs
+-> Oracle uses these information during database recovery operation.
+-> RMAN records backup and recovery information in Control files
+
+DB File Sequential Read
+----------------------------
+-> it occurs when we are trying to access data using index and Oracle is waiting for the read of index block from disk to buffer cache to complete
+-> its a Single block Read (commonly seen for Index block access or Table access by RowId)
+-> Single block IOs are usually the result of Using indexes
+-> Disk contention of Index Reads
+
+Db File Scattered Read
+-----------------------
+-> same type of event as "db file sequential read", except that Oracle will read multiple data blocks. 
+-> Multi-block reads are typically used on full table scans. 
+-> The name "scattered read" may seem misleading but it refers to the fact that multiple blocks are read into DB block buffers that are 'scattered' throughout memory.
+-> These are associated with Full table scans and Index fast full scans that wait on Physical IOs to complete
+-> SQL plans that join tables using HASH JOIN or SORT MERGE also causes this event
