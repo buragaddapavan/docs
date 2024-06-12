@@ -49,8 +49,8 @@ From Oracle’s point of view, buffer get is logical I/O  and disk read is physi
 AWR vs ADDM vs ASH
 -------------------
 AWR > Used to collect performance statistics, object usage statistics
-ASH > Top user events, Top queries, Top Sessions, Top DB objects
-ADDM > Analyses data in AWR to identify performance bottlenecks
+ASH > Top user events, Top queries, Top Sessions, Top DB objects         - ashrpt.sql
+ADDM > Analyses data in AWR to identify performance bottlenecks 	- addmrpt.sql and rtaddmrpt.sql
          - CPU Bottlenecks, Undersized Memory Structures, IO capacity issues
 		 - High Load SQL statement, DB Configuration issues
 
