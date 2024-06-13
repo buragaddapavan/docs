@@ -25,7 +25,6 @@ RMAN> BACKUP DEVICE TYPE DISK INCREMENTAL FROM SCN 750983 DATABASE
      FORMAT '/tmp/incr_for_standby/bkup_%U';
 alter database create standby controlfile as '/oracle/standby0405.ctl';
 Step 2: Make the Incremental Backup Accessible at the Standby Database
-alter database create standby controlfile as '/oracle/standby0405.ctl';
 alter database mount standby database;
 Step 3: Catalog the Incremental Backup Files at the Standby Database
 Step 4: Apply the Incremental Backup to the Standby Database
