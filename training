@@ -171,6 +171,7 @@ parallel=4
 logtime=all
 views_as_tables=emp_v
 compression=all
+transform=disable_archive_logging:Y
 
 Stop Datapump job:
 SELECT * FROM DBA_DATAPUMP_JOBS;
