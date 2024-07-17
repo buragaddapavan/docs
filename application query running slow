@@ -164,3 +164,8 @@ Db File Scattered Read
 -> The name "scattered read" may seem misleading but it refers to the fact that multiple blocks are read into DB block buffers that are 'scattered' throughout memory.
 -> These are associated with Full table scans and Index fast full scans that wait on Physical IOs to complete
 -> SQL plans that join tables using HASH JOIN or SORT MERGE also causes this event
+
+
+track the plan hash value change of the sqlid
+DBA_HIST_SQLSTAT , DBA_HIST_SNAPSHOT
+https://iamdbablog.wordpress.com/2020/01/28/plan-hash-value-change-script/
