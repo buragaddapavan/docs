@@ -169,3 +169,8 @@ Db File Scattered Read
 track the plan hash value change of the sqlid
 DBA_HIST_SQLSTAT , DBA_HIST_SNAPSHOT
 https://iamdbablog.wordpress.com/2020/01/28/plan-hash-value-change-script/
+
+
+Fix the SQLID to use the particular best hash plan in Oracle
+adding in SQL BASELINE or create sql_profile by using SQLT commands coe_xfr_sql_profile.sql and coe_xfr_sql_profile_sqlid_planhashvalue.sql
+https://smarttechways.com/2022/04/14/sql-id-is-using-different-sql-plan-causing-performance-in-oracle/
