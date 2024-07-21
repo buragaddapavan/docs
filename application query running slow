@@ -167,10 +167,36 @@ Db File Scattered Read
 
 
 track the plan hash value change of the sqlid
+-----------------------
 DBA_HIST_SQLSTAT , DBA_HIST_SNAPSHOT
 https://iamdbablog.wordpress.com/2020/01/28/plan-hash-value-change-script/
 
 
 Fix the SQLID to use the particular best hash plan in Oracle Doc ID 2885167.1
+-----------------------
 adding in SQL BASELINE or create sql_profile by using SQLT commands coe_xfr_sql_profile.sql and coe_xfr_sql_profile_sqlid_planhashvalue.sql
 https://smarttechways.com/2022/04/14/sql-id-is-using-different-sql-plan-causing-performance-in-oracle/
+
+Database Vault
+-----------------------
+CONFIGURE_DV 
+dbms_macadm.create_realm  - realm_type is set to 0  full access to its objects
+dbms_macadm.update_realm - realm_type =>'1' make the realms mandatory
+dbms_macadm.add_auth_to_realm 
+https://blog.yannickjaquier.com/oracle/database-vault-12cr1-installation.html
+
+
+TDE in 19c DB
+-----------------------
+alter system set WALLET_ROOT=”${ORACLE_BASE}/admin/${ORACLE_SID}/wallet” scope=spfile;
+alter system set TDE_CONFIGURATION=”KEYSTORE_CONFIGURATION=FILE”;
+Create the password protected key store
+administer key management create keystore identified by oracledbwr;
+administer key management create LOCAL auto_login keystore from keystore ‘/u02/app/oracle/admin/oradbwr/wallet/tde/’ identified by oracledbwr;
+administer key management set key using tag ‘oracledbwr_Tablespace_TDE’ force keystore identified by oracledbwr with backup using ‘TDE_backup’;
+select * from v$encryption_wallet;
+https://oracledbwr.com/configuring-transparent-data-encryption-in-oracle-19c-database/
+
+
+
+
