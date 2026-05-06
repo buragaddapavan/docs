@@ -181,7 +181,7 @@ select * from v$sql_shared_cursor where sql_id = '';
 
 Fix the SQLID to use the particular best hash plan in Oracle Doc ID 2885167.1
 -----------------------
-adding in SQL BASELINE or create sql_profile by using SQLT commands coe_xfr_sql_profile.sql and coe_xfr_sql_profile_sqlid_planhashvalue.sql
+adding in SQL BASELINE using DBMS_SPM or create sql_profile by using DBMS_SQLTUNE or SQLT commands coe_xfr_sql_profile.sql and coe_xfr_sql_profile_sqlid_planhashvalue.sql
 https://smarttechways.com/2022/04/14/sql-id-is-using-different-sql-plan-causing-performance-in-oracle/
 
 Database Vault
